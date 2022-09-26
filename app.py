@@ -4,9 +4,9 @@ from predict import show_predict_page
 from explore_page_2 import show_explore_page
 import os
 import pickle
-from airbnb_ETL import *
+from pipeline import *
 import re
-
+from page import load_city
 
 from stats import show_statistics
 
@@ -21,8 +21,6 @@ with st.spinner('Loading...'):
 
 
 city=st.sidebar.selectbox('Select City :',city_list)
-city=city if city is not None else 'florence' 
-
 
 @st.cache
 def get_data_interface(city):
@@ -38,34 +36,19 @@ def get_booking_rate_model():
     return data_interface.get_model('booking_rate')
 
 
-
-model_seattle_revenue = get_revenue_model()
-
-
-
-model_seattle_booking_rate = get_booking_rate_model()
-
-
-
-def get_data():
-    return data_interface.get_data()[1]
-
-
 def get_insight():
     return data_interface.get_insight_engine()
 
-df=get_data()
 
-
-
-
-page = st.sidebar.radio('Explore Data Or Predict', ("Predict", "Explore Data","Statistics"),horizontal =True)
+page = st.sidebar.radio('Explore Data Or Predict', ("Predict", "Explore Data","Statistics","load"),horizontal =True)
 
 if page == "Predict":
-    show_predict_page(city,df,model_seattle_revenue,model_seattle_booking_rate,get_insight().describe)
+    show_predict_page( get_revenue_model(),get_booking_rate_model(),get_insight().describe)
     
 elif page == 'Statistics':
-    show_statistics(get_insight().describe)   
+    show_statistics(get_insight().describe)  
+elif page == 'load':
+    load_city()
 else:
     show_explore_page(get_insight().insights)
     
