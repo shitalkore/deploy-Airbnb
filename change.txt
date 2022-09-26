@@ -1,0 +1,2 @@
+updated fig object
+refactor (variable names,debug code)
