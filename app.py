@@ -21,6 +21,7 @@ with st.spinner('Loading...'):
 
 
 city=st.sidebar.selectbox('Select City :',city_list)
+city=city if city is not None else 'denver'
 
 @st.cache
 def get_data_interface(city):
