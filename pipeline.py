@@ -514,11 +514,8 @@ def create_insights(data_interface):
     insight9 = Insight(plot=fig9, title=' How room type affect booking rate/average revenue?')
     insights.append(insight9)
     
-    #code for insight 10
 
-#     #code for insight 10
-    
-   
+    #code for insight 10
     fig10= plt.figure()
     
     plt.scatter(df['review_scores_rating'],df['revenue'], figure=fig10)
@@ -531,7 +528,7 @@ def create_insights(data_interface):
     insights.append(insight10)
 
     
-#     #code for insight 11
+    #code for insight 11
     import seaborn as sns
     fig11, ax = plt.subplots()
     sns.countplot(x=df["host_response_time"],figure=fig11 )
@@ -550,23 +547,11 @@ def create_insights(data_interface):
     plt.title('Response rate distribution',fontsize=10)
     insight12 = Insight(plot=fig12, title='  Host response rate')
     insights.append(insight12)
-    
-#     #code for insight 14
-    # fig13 = plt.figure()
-    # col_sorted=['revenue','availability_365','beds','accommodates','availability_60','review_scores_rating','reviews_per_month','availability_30'] 
-    # sns.heatmap(df[col_sorted].corr(),annot=True,cmap="YlGnBu",cbar=True,annot_kws={'size': 8},cbar_kws={"shrink":0.82})
-    # insight13 = Insight(plot=fig13, title='  Correlation matrix')
-    # insights.append(insight13)
-   
-    
+
     return insights
-
-
-if __name__ == '__main__':
+def etl(city_name):
     from bs4 import BeautifulSoup
     import requests
-    
-    ##DataInterfaces
     url = "http://insideairbnb.com/get-the-data/"
     req = requests.get(url)
     soup = BeautifulSoup(req.text, "html.parser")
@@ -575,17 +560,15 @@ if __name__ == '__main__':
         if link.get('href') is not None:
             links_scraped.append(link.get('href'))
     links_scraped = [x for x in links_scraped if 'csv' in x]
-    city_name='denver'
     city = City(city_name, links_scraped)
     etl = ETL(city)
     etl.extract()
     etl.transform()
     etl.load()
     etl.export_data_interface(tofile=True)
-    
-    
-    
-    # #modelling
+
+
+def modeling(city_name):
     import pickle
     data_interface_file=open(f'DataInterface_{city_name}.obj','rb')
     data_interface=pickle.load(data_interface_file)
@@ -600,17 +583,31 @@ if __name__ == '__main__':
     data_interface_file.close()
 
 
-
-    #insights
+def insights(city_name):
     import pickle
     data_interface_file=open(f'DataInterface_{city_name}.obj','rb')
     data_interface=pickle.load(data_interface_file)
     insights=create_insights(data_interface)
     insight_engine=InsightEngine(data_interface,insights) 
+    insight_engine.export()
+    data_interface_file.close()
+    
+
+def combine(city_name):
+    import pickle
+    data_interface_file=open(f'DataInterface_{city_name}.obj','rb')
+    data_interface=pickle.load(data_interface_file)
+    insight_engine=data_interface.get_insight_engine()
     insight_engine.load_model()
     insight_engine.export()
     data_interface_file.close()
     
+if __name__ == '__main__':
+   city_name='austin'
+   etl(city_name)
+   modeling(city_name)
+   insights(city_name)
+   combine(city_name)
 '''['amsterdam', 'antwerp', 'asheville', 'athens', 'austin', 'bangkok',
        'barcelona', 'barossa-valley', 'barwon-south-west-vic', 'beijing',
        'belize', 'bergamo', 'berlin', 'bologna', 'bordeaux', 'boston',
