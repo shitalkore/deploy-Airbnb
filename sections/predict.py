@@ -9,9 +9,23 @@ def show_predict_page(model_revenue,model_booking_rate,describe):
             return 10
         return round(describe.loc['min',col_name])
     def get_mean_value(col_name):
-        return round(describe.loc['50%',col_name])
+    	if col_name=='availability_365':
+    	    return 170
+    	elif col_name=='availability_60':
+      	    return 30
+    	elif col_name=='availability_30':
+    	    return 15
+    	else:
+            return round(describe.loc['50%',col_name])
     def get_max_value(col_name):
-        return round(((describe.loc['75%',col_name]-describe.loc['25%',col_name])*1.5)+describe.loc['mean',col_name])
+    	if col_name=='availability_365':
+    	    return 365
+    	elif col_name=='availability_60':
+    	    return 60
+    	elif col_name=='availability_30':
+    	    return 30
+    	else:
+            return round(((describe.loc['75%',col_name]-describe.loc['25%',col_name])*1.5)+describe.loc['mean',col_name])
     col_sorted=['price','availability_365','beds','accommodates','availability_60','review_scores_rating','reviews_per_month','availability_30']  
     st.title("""Revenue and Booking Rate Prediction""")
 
