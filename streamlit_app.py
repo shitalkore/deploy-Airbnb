@@ -1,8 +1,8 @@
 import streamlit as st
 import time
-from sections.predict import show_predict_page
-from sections.explore_page import show_explore_page
-from sections.stats import show_statistics
+from predict import show_predict_page
+from explore_page import show_explore_page
+from stats import show_statistics
 import os
 import pickle
 
